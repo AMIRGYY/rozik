@@ -115,28 +115,39 @@
     <title>Weather Test</title>
 </head>
 <body>
-    <div>
-        <h3>City: <span id="city">...</span></h3>
-        <h1>Temp: <span id="temp">...</span>°C</h1>
-    </div>
+    <h2>دمای فعلی:</h2>
+    <p>شهر: <span id="city">...</span></p>
+    <p>دما: <span id="temp">...</span> °C</p>
 
     <script>
-        const apiKey = "252f978480e8588821137342cbd19701";
+        const token = "252f978480e8588821137342cbd19701"; // توکن One-API.ir
 
-        navigator.geolocation.getCurrentPosition(position => {
-            const lat = position.coords.latitude;
-            const lon = position.coords.longitude;
+        // گرفتن موقعیت کاربر
+        if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition(position => {
+                const lat = position.coords.latitude;
+                const lon = position.coords.longitude;
 
-            fetch(`https://example.com/weather?lat=${lat}&lon=${lon}&appid=${apiKey}`)
-                .then(res => res.json())
-                .then(data => {
-                    document.getElementById("city").innerText = data.name;
-                    document.getElementById("temp").innerText = data.main.temp;
-                })
-                .catch(err => console.error(err));
-        }, err => {
-            alert("Cannot get location. Make sure location is enabled!");
-        });
+                const url = `https://one-api.ir/weather/?token=${token}&action=currentbylocation&lat=${lat}&lon=${lon}`;
+
+                fetch(url)
+                    .then(res => res.json())
+                    .then(data => {
+                        // نمایش داده‌ها روی صفحه
+                        document.getElementById("city").innerText = data.city_name;
+                        document.getElementById("temp").innerText = data.temp_c;
+                    })
+                    .catch(err => {
+                        console.error(err);
+                        alert("خطا در دریافت اطلاعات آب و هوا");
+                    });
+
+            }, err => {
+                alert("اجازه دسترسی به موقعیت را نداده‌اید!");
+            });
+        } else {
+            alert("مرورگر شما از GPS پشتیبانی نمی‌کند.");
+        }
     </script>
 </body>
 </html>
